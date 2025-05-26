@@ -1,0 +1,119 @@
+@model ECommerceBoutique.Models.Order
+
+@{
+    ViewData["Title"] = "Détails de la commande";
+}
+
+<div class="container">
+    <h1 class="my-4">@ViewData["Title"] #@Model.Id</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Produits commandés</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Quantité</th>
+                                    <th>Sous-total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width: 50px; height: 50px; object-fit: contain;" class="me-3">
+                                                <div>
+                                                    <h6 class="mb-0">@item.Product.Name</h6>
+                                                    <small class="text-muted">@item.Product.Category</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Subtotal.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                    <td><strong>@Model.Total.ToString("C")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informations de livraison</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Adresse :</strong><br>@Model.ShippingAddress</p>
+                    <p><strong>Ville :</strong> @Model.ShippingCity</p>
+                    <p><strong>Code postal :</strong> @Model.ShippingPostalCode</p>
+                    <p><strong>Pays :</strong> @Model.ShippingCountry</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Statut de la commande</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-@(Model.Status switch {
+                            "En attente de confirmation" => "warning",
+                            "Payée" => "success",
+                            _ => "secondary"
+                        })">@Model.Status</span>
+                        
+                        <a asp-controller="Payment" asp-action="Process" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="bi bi-credit-card"></i> Payer maintenant
+                        </a>
+                    </div>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Créée le</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        @if (Model.PaidAt.HasValue)
+                        {
+                            <dt class="col-sm-4">Payée le</dt>
+                            <dd class="col-sm-8">@Model.PaidAt.Value.ToString("dd/MM/yyyy HH:mm")</dd>
+                        }
+
+                        @if (Model.ShippedAt.HasValue)
+                        {
+                            <dt class="col-sm-4">Expédiée le</dt>
+                            <dd class="col-sm-8">@Model.ShippedAt.Value.ToString("dd/MM/yyyy HH:mm")</dd>
+                        }
+
+                        @if (Model.DeliveredAt.HasValue)
+                        {
+                            <dt class="col-sm-4">Livrée le</dt>
+                            <dd class="col-sm-8">@Model.DeliveredAt.Value.ToString("dd/MM/yyyy HH:mm")</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour aux commandes
+        </a>
+    </div>
+</div> 

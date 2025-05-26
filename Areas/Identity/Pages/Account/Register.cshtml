@@ -1,0 +1,139 @@
+@page
+@model ECommerceBoutique.Areas.Identity.Pages.Account.RegisterModel
+
+@{
+    ViewData["Title"] = "Inscription";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+                    <form id="registerForm" method="post" asp-route-returnUrl="@Model.ReturnUrl" asp-antiforgery="true">
+                        <div asp-validation-summary="All" class="text-danger text-center mb-3"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.FirstName" class="form-control" autocomplete="given-name" aria-required="true" placeholder="Prénom" />
+                                    <label asp-for="Input.FirstName">Prénom</label>
+                                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.LastName" class="form-control" autocomplete="family-name" aria-required="true" placeholder="Nom" />
+                                    <label asp-for="Input.LastName">Nom</label>
+                                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="nom@exemple.com" />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="tel" placeholder="Téléphone" />
+                            <label asp-for="Input.PhoneNumber">Téléphone</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Address" class="form-control" autocomplete="street-address" placeholder="Adresse" />
+                            <label asp-for="Input.Address">Adresse</label>
+                            <span asp-validation-for="Input.Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.City" class="form-control" autocomplete="address-level2" placeholder="Ville" />
+                                    <label asp-for="Input.City">Ville</label>
+                                    <span asp-validation-for="Input.City" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.PostalCode" class="form-control" autocomplete="postal-code" placeholder="Code postal" />
+                                    <label asp-for="Input.PostalCode">Code postal</label>
+                                    <span asp-validation-for="Input.PostalCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Country" class="form-control" autocomplete="country-name" placeholder="Pays" />
+                            <label asp-for="Input.Country">Pays</label>
+                            <span asp-validation-for="Input.Country" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Mot de passe" />
+                            <label asp-for="Input.Password">Mot de passe</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Confirmer le mot de passe" />
+                            <label asp-for="Input.ConfirmPassword">Confirmer le mot de passe</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="Input.IsVendor" type="checkbox" id="isVendorCheckbox" />
+                            <label class="form-check-label" asp-for="Input.IsVendor">
+                                Je souhaite devenir vendeur
+                            </label>
+                        </div>
+
+                        <div id="vendorFields" style="display: none;">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.CompanyName" class="form-control" placeholder="Nom de l'entreprise" />
+                                <label asp-for="Input.CompanyName">Nom de l'entreprise</label>
+                                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-plus me-2"></i>S'inscrire
+                            </button>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <p>
+                                <a asp-page="./Login" class="text-decoration-none">Déjà inscrit ? Se connecter</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var isVendorCheckbox = document.getElementById('isVendorCheckbox');
+            var vendorFields = document.getElementById('vendorFields');
+            var companyNameInput = document.querySelector('input[name="Input.CompanyName"]');
+
+            function toggleVendorFields() {
+                vendorFields.style.display = isVendorCheckbox.checked ? 'block' : 'none';
+                if (!isVendorCheckbox.checked) {
+                    companyNameInput.value = '';
+                }
+            }
+
+            isVendorCheckbox.addEventListener('change', toggleVendorFields);
+            toggleVendorFields(); // Appeler la fonction au chargement de la page
+        });
+    </script>
+} 

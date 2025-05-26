@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Accueil";
+}
+
+<div class="container">
+    <div class="row align-items-center min-vh-75 py-5">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-4">Découvrez notre collection exclusive</h1>
+            <p class="lead text-muted mb-4">Des produits de qualité sélectionnés pour vous. Profitez de nos offres exceptionnelles.</p>
+            <div class="d-flex gap-3">
+                <a asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="bi bi-cart-fill me-2"></i>Voir nos produits
+                </a>
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-person-plus-fill me-2"></i>Devenir vendeur
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="p-4">
+                <img src="/images/ecommerce-hero.jpg" alt="E-commerce illustration" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+    
+    .display-4 {
+        font-size: 2.8rem;
+        line-height: 1.2;
+    }
+    
+    .lead {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .shadow-lg {
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+    }
+</style>

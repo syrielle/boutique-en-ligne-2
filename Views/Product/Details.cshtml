@@ -1,0 +1,53 @@
+@model ECommerceBoutique.Models.Product
+
+@{
+    ViewData["Title"] = "Détails du produit";
+}
+
+<div class="container">
+    <h1 class="my-4">@Model.Name</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Name" style="max-height: 400px; object-fit: contain;">
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Description</h5>
+                    <p class="card-text">@Model.Description</p>
+                    
+                    <h5 class="card-title mt-4">Catégorie</h5>
+                    <p class="card-text">@Model.Category</p>
+                    
+                    <h5 class="card-title mt-4">Prix</h5>
+                    <p class="card-text text-primary h4">@Model.Price.ToString("C")</p>
+                    
+                    <h5 class="card-title mt-4">Stock disponible</h5>
+                    <p class="card-text">@Model.StockQuantity unités</p>
+
+                    <div class="mt-4">
+                        @if (User.IsInRole("Vendor"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Modifier</a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Supprimer</a>
+                        }
+                        else
+                        {
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <div class="input-group me-2" style="width: 150px;">
+                                    <input type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" class="form-control" />
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-cart-plus"></i> Ajouter au panier
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

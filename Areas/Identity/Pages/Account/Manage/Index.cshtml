@@ -1,0 +1,140 @@
+@page
+@model ECommerceBoutique.Areas.Identity.Pages.Account.Manage.IndexModel
+@{
+    ViewData["Title"] = "Mon Profil";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-person-circle" style="font-size: 4rem; color: #0d6efd;"></i>
+                    </div>
+                    <h5 class="card-title">@Model.Username</h5>
+                    <p class="card-text text-muted">
+                        @(User.IsInRole("Vendor") ? "Vendeur" : "Client")
+                    </p>
+                </div>
+            </div>
+
+            <div class="list-group mt-4 shadow-sm">
+                <a class="list-group-item list-group-item-action active" asp-page="./Index">
+                    <i class="bi bi-person me-2"></i> Mon Profil
+                </a>
+                <a class="list-group-item list-group-item-action" asp-page="./Email">
+                    <i class="bi bi-envelope me-2"></i> Email
+                </a>
+                <a class="list-group-item list-group-item-action" asp-page="./ChangePassword">
+                    <i class="bi bi-key me-2"></i> Mot de passe
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">@ViewData["Title"]</h4>
+                </div>
+                <div class="card-body">
+                    <form id="profile-form" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Input.FirstName" class="form-control" />
+                                    <label asp-for="Input.FirstName">Prénom</label>
+                                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Input.LastName" class="form-control" />
+                                    <label asp-for="Input.LastName">Nom</label>
+                                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.PhoneNumber" class="form-control" />
+                            <label asp-for="Input.PhoneNumber">Téléphone</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Address" class="form-control" />
+                            <label asp-for="Input.Address">Adresse</label>
+                            <span asp-validation-for="Input.Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Input.City" class="form-control" />
+                                    <label asp-for="Input.City">Ville</label>
+                                    <span asp-validation-for="Input.City" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Input.PostalCode" class="form-control" />
+                                    <label asp-for="Input.PostalCode">Code postal</label>
+                                    <span asp-validation-for="Input.PostalCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Country" class="form-control" />
+                            <label asp-for="Input.Country">Pays</label>
+                            <span asp-validation-for="Input.Country" class="text-danger"></span>
+                        </div>
+
+                        @if (User.IsInRole("Vendor"))
+                        {
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.CompanyName" class="form-control" />
+                                <label asp-for="Input.CompanyName">Nom de l'entreprise</label>
+                                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                            </div>
+                        }
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i>Enregistrer les modifications
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Email</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Email actuel :</strong> @Model.Email</p>
+                    <a class="btn btn-outline-primary" asp-page="./Email">
+                        <i class="bi bi-pencil me-2"></i>Changer l'email
+                    </a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Mot de passe</h5>
+                </div>
+                <div class="card-body">
+                    <a class="btn btn-outline-primary" asp-page="./ChangePassword">
+                        <i class="bi bi-key me-2"></i>Changer le mot de passe
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

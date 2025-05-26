@@ -1,0 +1,174 @@
+@model ECommerceBoutique.Models.Order
+
+@{
+    ViewData["Title"] = "Paiement de la commande";
+}
+
+<div class="container">
+    <h1 class="my-4">@ViewData["Title"] #@Model.Id</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Récapitulatif de la commande</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Sous-total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@item.Product.Name</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>@item.Subtotal.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                    <td><strong>@Model.Total.ToString("C")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Paiement</h5>
+                </div>
+                <div class="card-body">
+                    <form id="payment-form">
+                        <div class="mb-3">
+                            <label for="cardholder-name" class="form-label">Nom du titulaire de la carte</label>
+                            <input type="text" id="cardholder-name" class="form-control" required>
+                        </div>
+                        <div id="payment-element">
+                          <!-- Elements will create form elements here -->
+                        </div>
+                        <button id="submit" class="btn btn-primary w-100 mt-3">
+                            <div class="spinner hidden" id="spinner"></div>
+                            <span id="button-text">Payer maintenant</span>
+                        </button>
+                        <div id="payment-message" class="hidden"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('@ViewBag.StripePublishableKey');
+        const elements = stripe.elements({
+            clientSecret: '@ViewBag.ClientSecret',
+            appearance: {
+                theme: 'stripe',
+                variables: {
+                    colorPrimary: '#0d6efd',
+                }
+            }
+        });
+
+        const paymentElement = elements.create('payment', {
+            fields: {
+                billingDetails: {
+                    name: 'never'
+                }
+            }
+        });
+        paymentElement.mount('#payment-element');
+
+        const form = document.getElementById('payment-form');
+        const cardholderName = document.getElementById('cardholder-name');
+        const submitButton = document.getElementById('submit');
+        const spinner = document.getElementById('spinner');
+        const buttonText = document.getElementById('button-text');
+        const paymentMessage = document.getElementById('payment-message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!cardholderName.value) {
+                showMessage('Veuillez entrer le nom du titulaire de la carte');
+                return;
+            }
+
+            setLoading(true);
+
+            const { error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: window.location.origin + '/Order/Details/@ViewBag.OrderId',
+                    payment_method_data: {
+                        billing_details: {
+                            name: cardholderName.value
+                        }
+                    }
+                }
+            });
+
+            if (error) {
+                showMessage(error.message);
+            }
+
+            setLoading(false);
+        });
+
+        function setLoading(isLoading) {
+            submitButton.disabled = isLoading;
+            spinner.classList.toggle('hidden', !isLoading);
+            buttonText.classList.toggle('hidden', isLoading);
+        }
+
+        function showMessage(messageText) {
+            paymentMessage.classList.remove('hidden');
+            paymentMessage.textContent = messageText;
+            setTimeout(() => {
+                paymentMessage.classList.add('hidden');
+            }, 4000);
+        }
+    </script>
+
+    <style>
+        .hidden {
+            display: none;
+        }
+        #spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0d6efd;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #payment-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+} 

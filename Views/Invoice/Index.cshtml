@@ -1,0 +1,162 @@
+@model IEnumerable<ECommerceBoutique.Models.Invoice>
+
+@{
+    ViewData["Title"] = "Mes Factures";
+}
+
+<div class="container py-4">
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">@ViewData["Title"]</h1>
+            <p class="text-muted">Consultez l'historique de vos factures et téléchargez-les au format PDF</p>
+            <a asp-action="RegenerateInvoices" class="btn btn-warning">
+                <i class="bi bi-arrow-clockwise"></i> Régénérer les factures
+            </a>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total des achats</h5>
+                    <h3 class="mb-0">@ViewBag.TotalSpent.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-receipt fs-1 text-muted mb-3 d-block"></i>
+                <h3>Aucune facture disponible</h3>
+                <p class="text-muted">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <span>Cliquez sur le bouton ci-dessous pour régénérer vos factures ou </span>
+                    }
+                    découvrez nos produits.
+                </p>
+                <div class="mt-3">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-action="RegenerateInvoices" class="btn btn-warning me-2">
+                            <i class="bi bi-arrow-clockwise"></i> Régénérer les factures
+                        </a>
+                    }
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-primary">
+                        <i class="bi bi-cart"></i> Découvrir nos produits
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>N° Facture</th>
+                                <th>Date</th>
+                                <th>Vendeur</th>
+                                <th class="text-end">Montant</th>
+                                <th>Statut</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var invoice in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="text-primary">@invoice.InvoiceNumber</span>
+                                    </td>
+                                    <td>@invoice.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-shop me-2"></i>
+                                            @invoice.VendorName
+                                        </div>
+                                    </td>
+                                    <td class="text-end fw-bold">@invoice.TotalAmount.ToString("C")</td>
+                                    <td>
+                                        @{
+                                            var (badgeClass, icon) = invoice.PaymentStatus switch
+                                            {
+                                                "Payée" => ("bg-success", "bi-check-circle"),
+                                                "En attente de confirmation" => ("bg-warning", "bi-clock"),
+                                                _ => ("bg-secondary", "bi-question-circle")
+                                            };
+                                        }
+                                        <span class="badge @badgeClass">
+                                            <i class="bi @icon me-1"></i>
+                                            @invoice.PaymentStatus
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a asp-action="Details" asp-route-id="@invoice.Id" 
+                                               class="btn btn-sm btn-outline-primary" 
+                                               title="Voir les détails">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <button onclick="window.print()" 
+                                                    class="btn btn-sm btn-outline-secondary"
+                                                    title="Imprimer la facture">
+                                                <i class="bi bi-printer"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            .btn-group, .nav, .footer { 
+                display: none !important; 
+            }
+            .container { 
+                width: 100% !important; 
+                max-width: none !important; 
+            }
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .table {
+                border-color: #dee2e6 !important;
+            }
+        }
+        .table > :not(caption) > * > * {
+            padding: 1rem 0.75rem;
+        }
+        .badge {
+            padding: 0.5em 0.8em;
+        }
+    </style>
+} 

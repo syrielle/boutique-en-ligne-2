@@ -1,0 +1,120 @@
+@model IEnumerable<ECommerceBoutique.Models.Product>
+
+@{
+    ViewData["Title"] = "Nos Produits";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>@ViewData["Title"]</h1>
+        @if (User.IsInRole("Vendor"))
+        {
+            <form asp-action="ImportFromFakeStore" method="post">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-cloud-download"></i> Importer depuis FakeStore
+                </button>
+            </form>
+        }
+    </div>
+
+    <!-- Barre de recherche et filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" name="searchString" class="form-control" placeholder="Rechercher un produit..." value="@ViewBag.CurrentSearchString">
+                </div>
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="">Toutes les catégories</option>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            if (category == ViewBag.CurrentCategory)
+                            {
+                                <option value="@category" selected>@category</option>
+                            }
+                            else
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @if (!Model.Any())
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    Aucun produit ne correspond à votre recherche. Essayez de modifier vos critères.
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: contain;">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text">@item.Description</p>
+                            <p class="card-text">
+                                <small class="text-muted">@item.Category</small>
+                            </p>
+                            <p class="card-text">
+                                <strong class="text-primary">@item.Price.ToString("C")</strong>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">Stock: @item.StockQuantity</small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">
+                                    <i class="bi bi-eye"></i> Détails
+                                </a>
+                                @if (User.IsInRole("Vendor"))
+                                {
+                                    <div>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">
+                                            <i class="bi bi-pencil"></i> Modifier
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Conserver les valeurs des filtres
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchString = urlParams.get('searchString');
+            const category = urlParams.get('category');
+
+            if (searchString) {
+                document.querySelector('input[name="searchString"]').value = searchString;
+            }
+            if (category) {
+                document.querySelector('select[name="category"]').value = category;
+            }
+        });
+    </script>
+} 

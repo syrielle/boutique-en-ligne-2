@@ -1,0 +1,103 @@
+@model ECommerceBoutique.Models.Order
+
+@{
+    ViewData["Title"] = "Confirmer la commande";
+}
+
+<div class="container">
+    <h1 class="my-4">@ViewData["Title"]</h1>
+
+    <form asp-action="Create" method="post">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Récapitulatif de la commande</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Quantité</th>
+                                        <th>Sous-total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width: 50px; height: 50px; object-fit: contain;" class="me-3">
+                                                    <div>
+                                                        <h6 class="mb-0">@item.Product.Name</h6>
+                                                        <small class="text-muted">@item.Product.Category</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.UnitPrice.ToString("C")</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@((item.UnitPrice * item.Quantity).ToString("C"))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                        <td><strong>@Model.Total.ToString("C")</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Adresse de livraison</h5>
+                    </div>
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="ShippingAddress" class="form-label">Adresse</label>
+                            <textarea asp-for="ShippingAddress" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ShippingCity" class="form-label">Ville</label>
+                            <input asp-for="ShippingCity" class="form-control" />
+                            <span asp-validation-for="ShippingCity" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ShippingPostalCode" class="form-label">Code postal</label>
+                            <input asp-for="ShippingPostalCode" class="form-control" />
+                            <span asp-validation-for="ShippingPostalCode" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ShippingCountry" class="form-label">Pays</label>
+                            <input asp-for="ShippingCountry" class="form-control" />
+                            <span asp-validation-for="ShippingCountry" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Confirmer et payer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

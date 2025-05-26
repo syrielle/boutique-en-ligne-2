@@ -1,0 +1,121 @@
+@model ECommerceBoutique.Models.Invoice
+
+@{
+    ViewData["Title"] = "Détails de la facture";
+}
+
+<div class="container py-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-sm-6">
+                    <h2 class="h3 mb-3">FACTURE</h2>
+                    <div>
+                        <strong>Numéro:</strong> @Model.InvoiceNumber<br>
+                        <strong>Date:</strong> @Model.InvoiceDate.ToString("dd/MM/yyyy HH:mm")<br>
+                        <strong>Statut:</strong> 
+                        <span class="badge bg-@(Model.PaymentStatus == "Payée" ? "success" : "warning")">
+                            @Model.PaymentStatus
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-sm-end">
+                    <img src="/images/logo.png" alt="Logo" class="mb-3" style="max-height: 70px;">
+                    <div>
+                        <strong>ECommerceBoutique</strong><br>
+                        123 Rue du Commerce<br>
+                        75000 Paris, France
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-sm-6">
+                    <h6 class="mb-3">DE:</h6>
+                    <div>
+                        <strong>@Model.VendorName</strong><br>
+                        @Model.VendorAddress
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <h6 class="mb-3">POUR:</h6>
+                    <div>
+                        <strong>@Model.BuyerName</strong><br>
+                        @Model.BuyerAddress
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th class="text-end">Prix unitaire</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td class="text-end">@item.UnitPrice.ToString("C")</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end">@item.Subtotal.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total TTC:</strong></td>
+                            <td class="text-end"><strong>@Model.TotalAmount.ToString("C")</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-7">
+                    <p class="mb-0">Merci pour votre confiance !</p>
+                </div>
+                <div class="col-sm-5">
+                    <div class="d-flex justify-content-end">
+                        <button onclick="window.print()" class="btn btn-primary me-2">
+                            <i class="bi bi-printer"></i> Imprimer
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            body {
+                background-color: #fff;
+            }
+            .btn, .nav, .footer {
+                display: none !important;
+            }
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .container {
+                width: 100% !important;
+                max-width: none !important;
+                padding: 0 !important;
+            }
+        }
+        .table > :not(caption) > * > * {
+            padding: 1rem 0.75rem;
+        }
+    </style>
+} 

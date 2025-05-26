@@ -1,0 +1,43 @@
+@model ECommerceBoutique.Models.Product
+
+@{
+    ViewData["Title"] = "Supprimer le produit";
+}
+
+<div class="container">
+    <h1 class="my-4">@ViewData["Title"]</h1>
+
+    <div class="alert alert-danger">
+        <h4>Êtes-vous sûr de vouloir supprimer ce produit ?</h4>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Name">
+                </div>
+                <div class="col-md-8">
+                    <h4>@Model.Name</h4>
+                    <p>@Model.Description</p>
+                    <dl class="row">
+                        <dt class="col-sm-3">Catégorie</dt>
+                        <dd class="col-sm-9">@Model.Category</dd>
+
+                        <dt class="col-sm-3">Prix</dt>
+                        <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+
+                        <dt class="col-sm-3">Stock</dt>
+                        <dd class="col-sm-9">@Model.StockQuantity unités</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+        <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
+    </form>
+</div> 

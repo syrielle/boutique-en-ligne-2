@@ -1,0 +1,107 @@
+@model ECommerceBoutique.Models.Invoice
+
+@{
+    ViewData["Title"] = "Détails de la facture";
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2>Facture #@Model.InvoiceNumber</h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button onclick="window.print()" class="btn btn-secondary">
+                        <i class="bi bi-printer"></i> Imprimer
+                    </button>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Vendeur (Vous)</h5>
+                    <div>@Model.VendorName</div>
+                    <div>@Model.VendorAddress</div>
+                </div>
+                <div class="col-md-6">
+                    <h5>Client</h5>
+                    <div>@Model.BuyerName</div>
+                    <div>@Model.BuyerAddress</div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Informations de commande</h5>
+                    <div>Date de facture : @Model.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</div>
+                    <div>Numéro de commande : #@Model.OrderId</div>
+                    <div>Statut : 
+                        <span class="badge bg-@(Model.PaymentStatus switch {
+                            "En attente de confirmation" => "warning",
+                            "Payée" => "success",
+                            _ => "secondary"
+                        })">@Model.PaymentStatus</span>
+                    </div>
+                    @if (Model.PaidAt.HasValue)
+                    {
+                        <div>Date de paiement : @Model.PaidAt.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                    }
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.UnitPrice.ToString("C")</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Subtotal.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total des ventes</strong></td>
+                            <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Commission (10%)</strong></td>
+                            <td><strong>@((Model.TotalAmount - Model.VendorTotal).ToString("C"))</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Montant net</strong></td>
+                            <td><strong>@Model.VendorTotal.ToString("C")</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="VendorInvoices" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour aux factures
+        </a>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            .btn, .nav, .footer { display: none !important; }
+            .container { width: 100% !important; max-width: none !important; }
+        }
+    </style>
+} 

@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ECommerceBoutique.Models
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Mon Compte
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profil</a></li>
+            <li><a class="dropdown-item" asp-controller="Order" asp-action="Index">Mes Commandes</a></li>
+            <li><a class="dropdown-item" asp-controller="Invoice" asp-action="Index">Mes Factures</a></li>
+            @if (User.IsInRole("Vendor"))
+            {
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" asp-controller="VendorOrder" asp-action="Index">Commandes (Vendeur)</a></li>
+                <li><a class="dropdown-item" asp-controller="Invoice" asp-action="VendorInvoices">Factures (Vendeur)</a></li>
+            }
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                    <button type="submit" class="dropdown-item">
+                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-controller="Cart" asp-action="Index">
+            <i class="bi bi-cart"></i> Panier
+        </a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">
+            <i class="bi bi-box-arrow-in-right"></i> Connexion
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">
+            <i class="bi bi-person-plus"></i> Inscription
+        </a>
+    </li>
+}
+</ul>
